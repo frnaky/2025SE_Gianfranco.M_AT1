@@ -2,4 +2,5 @@ Flask
 bcrypt
 flask_wtf
 flask-csp
+flask_sqlalchemy
 flask-login

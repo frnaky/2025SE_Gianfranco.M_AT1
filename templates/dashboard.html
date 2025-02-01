@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h1 class="text-center mb-4">Welcome, {{ user.username }}!</h1>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Your Dashboard</h5>
+        <p class="card-text">Here you can view and manage your logs.</p>
+        <a href="{{ url_for('create_log') }}" class="btn btn-primary"
+          >Create Log</a
+        >
+        <a href="{{ url_for('search_logs') }}" class="btn btn-secondary"
+          >Search Logs</a
+        >
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">Log Out</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

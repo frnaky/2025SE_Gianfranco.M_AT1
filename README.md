@@ -2,15 +2,20 @@
 
 ## Introduction
 
+<<<<<<< Updated upstream
 Welcome to the Diary System! This project is designed to help users maintain a personal diary, allowing them to record their thoughts, experiences, and important events in a structured and secure manner.
 
 Welcome to LogVault, a secure and safe software solution to help development teams record their code, and
+=======
+Welcome to LogVault, a secure and safe software solution designed to help development teams record their code, track progress and streamline workflow.
+>>>>>>> Stashed changes
 
 ## Features
 
 - **User Authentication**: Secure login and registration system to protect user data.
 - **Entry Management**: Create, read, update, and delete diary entries.
 - **Search Functionality**: Easily search through diary entries by date or keywords.
+<<<<<<< Updated upstream
 - **Data Encryption**: Ensure that all diary entries are stored securely with encryption.
 - **User-Friendly Interface**: Simple and intuitive interface for easy navigation and use.
 
@@ -35,6 +40,10 @@ To install and run the Diary System locally, follow these steps:
    npm start
    ```
 
+=======
+- **User-Friendly Interface**: Simple and intuitive interface for easy navigation and use.
+
+>>>>>>> Stashed changes
 ## Usage
 
 1. Register for a new account or log in with your existing credentials.
@@ -43,6 +52,7 @@ To install and run the Diary System locally, follow these steps:
 4. View, edit, or delete your entries from the dashboard.
 5. Use the search bar to find specific entries.
 
+<<<<<<< Updated upstream
 ## Contributing
 
 We welcome contributions to the Diary System! If you would like to contribute, please follow these steps:
@@ -62,12 +72,18 @@ We welcome contributions to the Diary System! If you would like to contribute, p
    ```
 5. Create a pull request and describe your changes.
 
+=======
+>>>>>>> Stashed changes
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Contact
 
+<<<<<<< Updated upstream
 For any questions or feedback, please contact Gianfranco at gianfranco@example.com.
 
 Thank you for using the Diary System!
+=======
+For any questions or feedback, please contact Gianfranco at gmanieli5647@gmail.com
+>>>>>>> Stashed changes

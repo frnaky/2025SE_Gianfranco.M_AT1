@@ -2,4 +2,8 @@ Flask
 bcrypt
 flask_wtf
 flask-csp
+<<<<<<< Updated upstream
+=======
+flask_sqlalchemy
+>>>>>>> Stashed changes
 flask-login

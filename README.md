@@ -9,6 +9,7 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 - **User Authentication**: Secure login and registration system to protect user data.
 - **Entry Management**: Create, read, update, and delete diary entries.
 - **Search Functionality**: Easily search through diary entries by date or keywords.
+- **Data Encryption**: Ensure that all diary entries are stored securely with encryption.
 - **User-Friendly Interface**: Simple and intuitive interface for easy navigation and use.
 
 ## Usage
@@ -25,4 +26,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or feedback, please contact Gianfranco at gianfranco.manieli@education.nsw.gov.au
+For any questions or feedback, please contact Gianfranco at gmanieli5647@gmail.com

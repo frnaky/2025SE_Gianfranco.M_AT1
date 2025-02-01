@@ -1,13 +1,8 @@
-import bcrypt
-import requests
-from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-import logging
-from flask_wtf import CSRFProtect
-from flask_csp.csp import csp_header
-import userManagement as dbHandler
+import bcrypt
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'

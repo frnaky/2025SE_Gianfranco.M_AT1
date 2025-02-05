@@ -9,8 +9,7 @@ import re
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
-#db
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///databaseFiles/database.db' #keep eye on this, might need to alter to fit database.db file location
+#database file link
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "databaseFiles", "database.db")}' #testing weird solution on stackoverflow, might change after
 db = SQLAlchemy(app)
 
@@ -27,11 +26,11 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, nullable=False)
 
     def set_password(self, password):
-    #hash
+    #hashing using bcrypt
         self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     def check_password(self, password):
-    #veriby password
+    #veriying password forlogin
         return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
     
     def get_id(self):
@@ -39,14 +38,18 @@ class User(UserMixin, db.Model):
 
 class Log(db.Model):
     __tablename__ = 'logs'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    log_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    username = db.Column(db.String(50), nullable=False, default="N/A")
     project_name = db.Column(db.String(100), nullable=False)
     code_language = db.Column(db.String(50), nullable=False)
-    repository = db.Column(db.String(100), nullable=False)
-    log_content = db.Column(db.Text, nullable=False)
-    start_date = db.Column(db.DateTime, nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
+    time_worked = db.Column(db.Float, nullable=False)
+    repository = db.Column(db.String(100), nullable=False)
+    dev_notes = db.Column(db.Text, nullable=False)
+    log_content = db.Column(db.Text, nullable=False)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -87,7 +90,7 @@ def login():
 
         email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$' #regeualr expression for email valid
         if not re.match(email_regex, email):
-            flash('Please enter a valid email.', 'danger') 
+            flash('Please Enter a Valid Email', 'danger') 
             return redirect(url_for('login'))
 
         user = User.query.filter_by(email=email).first()
@@ -122,18 +125,30 @@ def create_log():
     if request.method == 'POST':
         project_name = request.form['project_name']
         code_language = request.form['code_language']
+        start_time = datetime.strptime(request.form['start_time'], '%Y-%m-%dT%H:%M')
+        end_time = datetime.strptime(request.form['end_time'], '%Y-%m-%dT%H:%M')
         repository = request.form['repository']
+        dev_notes = request.form['dev_notes']
         log_content = request.form['log_content']
-        start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%dT%H:%M') #not sure if timeformat work
 
+#calculate rounding up 15 mins for client billing purposes
+        delta = end_time - start_time
+        minutes_worked = delta.total_seconds() / 60
+        rounded_minutes = (round(minutes_worked / 15)) * 15 
+        time_worked = rounded_minutes / 60
+        
         new_log = Log(
-            user_id=current_user.id,
+            user_id=current_user.user_id,
+            username=current_user.username,
             project_name=project_name,
             code_language=code_language,
+            start_time=start_time,
+            end_time=end_time,
+            date=datetime.utcnow(),
+            time_worked=time_worked,
             repository=repository,
-            log_content=log_content,
-            start_date=start_date,
-            date=datetime.utcnow()
+            dev_notes=dev_notes,
+            log_content=log_content
         )
         db.session.add(new_log)
         db.session.commit()
@@ -151,9 +166,13 @@ def search_logs():
         (Log.project_name.contains(query)) |
         (Log.code_language.contains(query)) |
         (Log.repository.contains(query)),
-        Log.user_id == current_user.id
+        Log.user_id == current_user.user_id
     ).all()
     return render_template('search_logs.html', logs=logs, query=query)
+
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

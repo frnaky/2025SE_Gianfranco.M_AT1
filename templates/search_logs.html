@@ -18,16 +18,34 @@
     <div class="list-group">
       {% for log in logs %}
       <div class="list-group-item">
-        <h5>{{ log.project_name }}</h5>
-        <p><strong>Language:</strong> {{ log.code_language }}</p>
-        <p><strong>Repository:</strong> {{ log.repository }}</p>
-        <p><strong>Date:</strong> {{ log.date.strftime('%Y-%m-%d %H:%M') }}</p>
-        <p>{{ log.log_content }}</p>
+        <h5>Project: {{ log.project_name }}</h5>
+        <p><strong>Developer:</strong> {{ log.username }}</p>
+        <p>
+          <strong>Start Time:</strong> {{ log.start_time.strftime('%I:%M%p
+          %d/%B/%Y') }}
+        </p>
+        <p>
+          <strong>End Time:</strong> {{ log.end_time.strftime('%I:%M%p
+          %d/%B/%Y') }}
+        </p>
+        <p>
+          <strong>Diary Entry Time:</strong> {{
+          log.diary_entry_time.strftime('%I:%M%p %d/%B/%Y') }}
+        </p>
+        <p><strong>Time Worked:</strong> {{ log.time_worked }} hours</p>
+        <p>
+          <strong>Repo:</strong>
+          <a href="{{ log.repository }}" target="_blank"
+            >{{ log.repository }}</a
+          >
+        </p>
+        <p><strong>Developer Notes:</strong> {{ log.developer_notes }}</p>
+        <pre><code>{{ log.code_content }}</code></pre>
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <p class="text-center">No logs found.</p>
+    <p class="text-center">No Logs Found.</p>
     {% endif %}
   </div>
 </div>

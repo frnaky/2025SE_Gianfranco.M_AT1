@@ -119,3 +119,52 @@ main {
   font-size: 14px;
   opacity: 0.8;
 }
+
+.footer .container p,
+.footer .container a {
+  margin-right: 20px;
+}
+
+.form-control::placeholder {
+    color: #d8dee9;
+    opacity: 0.7;/
+}
+
+.list-group {
+  background-color: var(--nord1);
+  border: 1px solid var(--nord2);
+  color: var(--nord4);
+  margin-bottom: 20px;
+}
+
+.list-group-item {
+  background-color: var(--nord2);
+  border: 1px solid var(--nord3);
+  color: var(--nord6);
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.list-group-item h5 {
+  color: var(--nord9);
+}
+
+.list-group-item p {
+  color: var(--nord4);
+}
+
+.list-group-item p strong {
+  color: var(--nord5);
+}
+
+.list-group-item:hover {
+  background-color: var(--nord3);
+  cursor: pointer;
+}
+
+.text-center {
+  color: var(--nord5);
+  font-size: 16px;
+  opacity: 0.8;
+}

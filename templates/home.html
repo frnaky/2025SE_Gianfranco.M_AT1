@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block content %}
+<div class="text-center mt-5">
+  <h1 class="display-4 fw-bold">Welcome to LogVault</h1>
+  <p class="lead">
+    Welcome to LogVault, a secure and safe software solution designed to help
+    development teams record their code, track progress and streamline workflow.
+  </p>
+
+  <div class="d-flex justify-content-center mt-4">
+    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg mx-2"
+      >Log In</a
+    >
+    <a
+      href="{{ url_for('signup') }}"
+      class="btn btn-outline-secondary btn-lg mx-2"
+      >Sign Up</a
+    >
+  </div>
+</div>
+{% endblock %}

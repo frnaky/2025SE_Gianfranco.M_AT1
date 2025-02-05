@@ -1,25 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="base-uri 'self'; default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'self'; worker-src 'self'; frame-src 'none'; form-action 'self'; manifest-src 'self'"
-    />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="static/css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
     <title>LogVault</title>
-    <link rel="manifest" href="static/manifest.json" />
-    <link rel="icon" type="image/x-icon" href="static/images/favicon.png" />
-    <meta name="theme-color" content="" />
-    <link href="static/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      rel="manifest"
+      href="{{ url_for('static', filename='manifest.json') }}"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/favicon.png') }}"
+    />
+    <meta name="theme-color" content="#2E3440" />
+    <link
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="{{ url_for('static', filename='css/custom.css') }}"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    {% include "partials/menu.html" %}
-    <div class="container mt-5">{% block content %}{% endblock %}</div>
-    {% include "partials/footer.html" %}
-    <script src="static/js/bootstrap.bundle.min.js"></script>
-    <script src="static/js/serviceWorker.js"></script>
-    <script src="static/js/app.js"></script>
+    <div class="wrapper">
+      {% include "partials/menu.html" %} {% with messages =
+      get_flashed_messages(with_categories=true) %} {% if messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
+      <main class="container mt-5 flex-grow-1">
+        {% block content %}{% endblock %}
+      </main>
+
+      {% include "partials/footer.html" %}
+    </div>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/serviceWorker.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
   </body>
 </html>

@@ -1,0 +1,60 @@
+{% extends "base.html" %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h1 class="text-center mb-4">Create Log</h1>
+    <form method="POST" action="{{ url_for('create_log') }}">
+      <div class="mb-3">
+        <label for="project_name" class="form-label">Project Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="project_name"
+          name="project_name"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="code_language" class="form-label">Code Language</label>
+        <input
+          type="text"
+          class="form-control"
+          id="code_language"
+          name="code_language"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="repository" class="form-label">Repository</label>
+        <input
+          type="text"
+          class="form-control"
+          id="repository"
+          name="repository"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="log_content" class="form-label">Log Content</label>
+        <textarea
+          class="form-control"
+          id="log_content"
+          name="log_content"
+          rows="5"
+          required
+        ></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="start_date" class="form-label">Start Date</label>
+        <input
+          type="datetime-local"
+          class="form-control"
+          id="start_date"
+          name="start_date"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Create Log</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

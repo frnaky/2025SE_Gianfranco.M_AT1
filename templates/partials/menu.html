@@ -1,6 +1,17 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('index') }}">LogVault</a>
+    <a
+      class="navbar-brand d-flex align-items-center"
+      href="{{ url_for('index') }}"
+    >
+      <img
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="LogVault Logo"
+        height="40"
+        class="me-2"
+      />
+      LogVault
+    </a>
     <button
       class="navbar-toggler"
       type="button"

@@ -14,11 +14,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 
-#database file link
+# DATABASE CONFIGURATION
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "databaseFiles", "database.db")}' #testing weird solution on stackoverflow, might change after
 db = SQLAlchemy(app)
 
-#flask mail config
+# FLASK MAIL CONFIGURATION
 load_dotenv()
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -26,7 +26,6 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = 'no-reply@logvault.com'
-
 mail = Mail(app)
 
 login_manager = LoginManager(app)
@@ -39,13 +38,14 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=True)
 
     def set_password(self, password):
-    #hashing using bcrypt
+        # BCRYPT HASHING + SALT
         self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     def check_password(self, password):
-    #veriying password forlogin
+        # BCRYPT CHECK
         return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
     
     def get_id(self):
@@ -65,14 +65,35 @@ class Log(db.Model):
     repository = db.Column(db.String(100), nullable=False)
     dev_notes = db.Column(db.Text, nullable=False)
     log_content = db.Column(db.Text, nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('logs', lazy=True))
+    team = db.relationship('Team', backref=db.backref('logs', lazy=True))
+
+
+class Team(db.Model):
+    __tablename__ = 'teams'
+    team_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def set_password(self, password):
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    def check_password(self, password):
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# HOME PAGE
+
 @app.route('/')
 def index():
     return render_template('home.html')	
+
+# SIGNUP PAGE + FUNCTIONALITY
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -80,15 +101,17 @@ def signup():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        team_name = request.form['team_name']
+        team_password = request.form['team_password']
 
-    #only can have letters and numbers, no spaces max 10 characters
+    # REGULAR EXPRESSION FOR USERNAME VALIDATION
         username_regex = r'^[A-Za-z0-9]{1,20}$'
 
         if not re.match(username_regex, username):
             flash('Username CANNOT have spaces and must not exceed 20 characters!', 'danger')
             return redirect(url_for('signup'))
         
-    #password regular expression validation
+    # REGULAR EXPRESSION FOR PASSWORD VALIDATION
         password_regex = r'^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$'
         
         if not re.match(password_regex, password):
@@ -98,9 +121,21 @@ def signup():
         if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
             flash('User Already Exists.', 'danger')
             return redirect(url_for('signup'))
+        
+    #TEAM functionality    
+        team = Team.query.filter_by(name=team_name).first()
+        if team:
+            if not team.check_password(team_password):
+                flash('Incorrect Team Password. You might need to create a new team, or retry credentials.', 'danger')
+                return redirect(url_for('signup'))
+        else:
+            #TEAM CREATION    
+            team = Team(name=team_name)
+            team.set_password(team_password)
+            db.session.add(team)
+            db.session.commit()
 
-        #creation
-        new_user = User(username=username, email=email, created_at=datetime.utcnow())
+        new_user = User(username=username, email=email, created_at=datetime.utcnow(), team_id=team.team_id)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
@@ -110,26 +145,30 @@ def signup():
 
     return render_template('signup.html')
 
+#LOGIN PAGE + FUNCTIONALITY
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-
-        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$' #regeualr expression for email valid
+        # REGULAR EXPRESSION FOR EMAIL VALIDATION
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$' 
         if not re.match(email_regex, email):
             flash('Please Enter a Valid Email', 'danger') 
             return redirect(url_for('login'))
 
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
-            login_user(user, duration=3600) #reauthentication every hour, and after closing tab
+            # REAUTHENTICATION EVERY 3600 SECONDS/1 HOUR
+            login_user(user, duration=3600)
             flash('Logged-In.', 'success')
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid Log-In, Please Retry.', 'danger')
     return render_template('login.html')
+
+# LOGOUT FUNCTIONALITY
 
 @app.route('/logout')
 @login_required
@@ -138,10 +177,14 @@ def logout():
     flash('Logged-Out.', 'success')
     return redirect(url_for('index'))
 
+# DASHBOARD
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
     return render_template('dashboard.html', user=current_user)
+
+# CREATE LOGS PAGE + FUNCTIONALITY
 
 @app.route('/create_log', methods=['GET', 'POST'])
 @login_required
@@ -157,12 +200,12 @@ def create_log():
         end_date_str = request.form['end_date']
 
 
-#ensure start and end date are not empty   
+    # ENSURE START AND DART ARE FILLED
         if not start_date_str or not end_date_str:
             flash("Start Date and End Date needed.", "danger")
             return redirect(url_for('create_log'))
-
-        #conversion
+        
+        # CONVERSION OF TIME TO DATETIME OBJECT
         start_date = datetime.strptime(start_date_str, '%Y-%m-%dT%H:%M')
         end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
 
@@ -170,7 +213,7 @@ def create_log():
         dev_notes = request.form['dev_notes']
         log_content = request.form['log_content']
 
-#calculate rounding up 15 mins for client billing purposes
+    # ROUNDING SYSTEM FOR CLIENT BILLING PURPOSES
         delta = end_date - start_date
         minutes_worked = delta.total_seconds() / 60
         rounded_minutes = (round(minutes_worked / 15)) * 15 
@@ -187,7 +230,8 @@ def create_log():
             time_worked=time_worked,
             repository=repository,
             dev_notes=dev_notes,
-            log_content=log_content
+            log_content=log_content,
+            team_id=current_user.team_id 
         )
         db.session.add(new_log)
         db.session.commit()
@@ -197,23 +241,64 @@ def create_log():
 
     return render_template('create_log.html')
 
+# VIEW LOGS PAGE + FUNCTIONALITY
+
 @app.route('/search_logs', methods=['GET'])
 @login_required
 def search_logs():
-    query = request.args.get('query', '')
-    logs = Log.query.filter(
-        (Log.project_name.contains(query)) |
-        (Log.code_language.contains(query)) |
-        (Log.repository.contains(query)),
-        Log.user_id == current_user.user_id
-    ).all()
-    return render_template('search_logs.html', logs=logs, query=query)
+    general_query = request.args.get('query', '')
+    code_language = request.args.get('code_language', '')
+    username = request.args.get('username', '')
+    project_name = request.args.get('project_name', '')
+    repository = request.args.get('repository', '')
+    date_from = request.args.get('date_from', '')
+    date_to = request.args.get('date_to', '')
+
+    query = Log.query.filter(Log.team_id == current_user.team_id)
+
+    if general_query:
+        query = query.filter(
+            (Log.project_name.contains(general_query)) |
+            (Log.code_language.contains(general_query)) |
+            (Log.repository.contains(general_query)) |
+            (Log.log_content.contains(general_query))
+        )
+    if code_language:
+        query = query.filter(Log.code_language == code_language)
+    if username:
+        query = query.filter(Log.username == username)
+    if project_name:
+        query = query.filter(Log.project_name == project_name)
+    if repository:
+        query = query.filter(Log.repository == repository)
+    if date_from:
+        query = query.filter(Log.start_date >= datetime.strptime(date_from, '%Y-%m-%d'))
+    if date_to:
+        query = query.filter(Log.end_date <= datetime.strptime(date_to + ' 23:59:59', '%Y-%m-%d %H:%M:%S'))
+
+    unique_languages = db.session.query(Log.code_language).distinct().all()
+    unique_usernames = db.session.query(Log.username).distinct().all()
+    unique_projects = db.session.query(Log.project_name).distinct().all()
+    unique_repositories = db.session.query(Log.repository).distinct().all()
+
+    logs = query.all()
+
+    return render_template('search_logs.html',
+                         logs=logs,
+                         query=general_query,
+                         unique_languages=unique_languages,
+                         unique_usernames=unique_usernames,
+                         unique_projects=unique_projects,
+                         unique_repositories=unique_repositories)
+
+# PRIVACY POLICY PAGE
 
 @app.route('/privacy')
 def privacy():
     return render_template('privacy.html')
 
-#pirvacy policy page
+# DOWNLAODING DATA FUNCTIONALITY
+
 @app.route('/download_data', methods=['GET'])
 @login_required
 def download_data():
@@ -245,6 +330,7 @@ def download_data():
     byte_output = BytesIO(output.getvalue().encode('utf-8'))
     return send_file(byte_output, as_attachment=True, download_name="user_logs.csv", mimetype="text/csv")
 
+# DELETE ACCOUNT FUNCTIONALITY
 
 @app.route('/delete_account', methods=['POST'])
 @login_required
@@ -293,6 +379,8 @@ def forgot_password():
             return redirect(url_for('forgot_password'))
 
     return render_template('forgot_password.html')
+
+# RESET PASSWORD FUNCTIONALITY
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):

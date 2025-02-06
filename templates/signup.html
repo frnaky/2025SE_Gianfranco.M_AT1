@@ -47,6 +47,40 @@
           </span>
         </div>
       </div>
+      <div class="mb-3">
+        <label for="team_name" class="form-label">Team Name</label>
+        <div class="d-flex">
+          <input
+            type="text"
+            class="form-control"
+            id="team_name"
+            name="team_name"
+            required
+          />
+          <span
+            class="ms-2"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="If you are not part of a team, you can create a team by choosing a unique name."
+          >
+            <i
+              class="bi bi-info-circle"
+              style="cursor: pointer; font-size: 1.5rem"
+            ></i>
+          </span>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="team_password" class="form-label">Team Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="team_password"
+          name="team_password"
+          required
+        />
+      </div>
+
       <button type="submit" class="btn btn-primary w-100">Sign Up</button>
     </form>
     <p class="text-center mt-3">

@@ -1,11 +1,71 @@
-{% extends 'layout.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container">
-    <div class="row">
-        <h1 class="display-1">Privacy Policy</h1>
+  <div class="text-center mt-5">
+    <h1 class="display-4 fw-bold">Privacy Policy</h1>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-8 offset-md-2">
+      <p>
+        Your privacy is important to us. It is LogVault's policy to respect your
+        privacy regarding any information we may collect from you across our
+        website, <a href="{{ url_for('dashboard') }}">http://logvault.com</a>,
+        and other sites we own and operate.
+      </p>
+      <div class="section mb-5">
+        <h2>Your Options</h2>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-body">
+                <h3 class="card-title">Download Data</h3>
+                <p class="card-text">Download all your logs.</p>
+                <form
+                  method="GET"
+                  action="{{ url_for('download_data') }}"
+                ></form>
+                <a href="{{ url_for('download_data') }}" class="btn btn-primary"
+                  >Download Data</a
+                >
+                <div
+                  id="downloadError"
+                  class="text-danger mt-3"
+                  style="display: none"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-body">
+                <h3 class="card-title">Delete Account</h3>
+                <p class="card-text">
+                  Delete Account and Data associated with it.
+                </p>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  onclick="confirmDelete()"
+                >
+                  Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row"></div>
     </div>
-    <div class="row">
-
-    </div>
+  </div>
 </div>
+
+<form
+  id="deleteAccountForm"
+  action="{{ url_for('delete_account') }}"
+  method="POST"
+  style="display: none"
+>
+  <button type="submit" style="display: none"></button>
+</form>
+
+<script src="/static/js/privacy.js"></script>
 {% endblock %}

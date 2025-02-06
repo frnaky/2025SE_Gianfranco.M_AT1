@@ -1,13 +1,249 @@
-*   {
-
+:root {
+  --nord0: #2e3440; /* polar */
+  --nord1: #3b4252;
+  --nord2: #434c5e;
+  --nord3: #4c566a;
+  --nord4: #d8dee9; /* snow */
+  --nord5: #e5e9f0;
+  --nord6: #eceff4;
+  --nord7: #8fbcbb; /* frost */
+  --nord8: #88c0d0;
+  --nord9: #81a1c1;
+  --nord10: #5e81ac;
+  --nord11: #bf616a; /* aurora */
+  --nord12: #d08770;
+  --nord13: #ebcb8b;
+  --nord14: #a3be8c;
+  --nord15: #b48ead;
 }
+
+/* font */
+
 body {
-
+  background-color: var(--nord0);
+  color: var(--nord4);
+  font-family: "Noto Sans", serif;
+  font-weight: 700;
 }
-.container {
 
+.navbar {
+  background-color: var(--nord1);
 }
 
-.row {
-    
+.navbar-brand,
+.nav-link {
+  color: var(--nord6) !important;
+}
+
+.nav-link:hover {
+  color: var(--nord7) !important;
+}
+
+.card {
+  background-color: var(--nord1);
+  border: 1px solid var(--nord2);
+  color: var(--nord4);
+}
+
+.btn-primary {
+  background-color: var(--nord10);
+  border-color: var(--nord10);
+}
+
+.btn-primary:hover {
+  background-color: var(--nord9);
+  border-color: var(--nord9);
+}
+
+.btn-secondary {
+  background-color: var(--nord3);
+  border-color: var(--nord3);
+}
+
+.btn-secondary:hover {
+  background-color: var(--nord2);
+  border-color: var(--nord2);
+}
+
+.btn-danger {
+  background-color: var(--nord11);
+  border-color: var(--nord11);
+}
+
+.btn-danger:hover {
+  background-color: var(--nord12);
+  border-color: var(--nord12);
+}
+
+.input-group-text {
+  background: white;
+  border-left: none;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex-grow: 1;
+}
+
+.footer {
+  background-color: var(--nord1);
+  color: var(--nord6);
+  text-align: center;
+  padding: 15px 0;
+  margin-top: auto;
+  border-top: 2px solid var(--nord2);
+}
+
+.footer-text {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.footer .container p,
+.footer .container a {
+  margin-right: 20px;
+}
+
+.list-group {
+  background-color: var(--nord1);
+  border: 1px solid var(--nord2);
+  color: var(--nord4);
+  margin-bottom: 20px;
+}
+
+.list-group-item {
+  background-color: var(--nord2);
+  border: 1px solid var(--nord3);
+  color: var(--nord6);
+  padding: 20px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.list-group-item h5 {
+  color: var(--nord9);
+}
+
+.list-group-item p {
+  color: var(--nord4);
+}
+
+.list-group-item p strong {
+  color: var(--nord5);
+}
+
+.list-group-item:hover {
+  background-color: var(--nord3);
+  cursor: pointer;
+}
+
+.text-center {
+  color: var(--nord5);
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/*forms*/
+
+.form-control {
+  background-color: var(--nord2);
+  border: 1px solid var(--nord3);
+  color: var(--nord6);
+}
+
+.form-control:focus {
+  background-color: var(--nord2);
+  border-color: var(--nord8);
+  color: var(--nord6);
+}
+
+.form-select {
+  background-color: var(--nord2);
+  border: 1px solid var(--nord3);
+  color: var(--nord6);
+  font-family: "Noto Sans", serif;
+  font-size: 16px;
+}
+
+.form-select:focus {
+  background-color: var(--nord2);
+  border-color: var(--nord8);
+  color: var(--nord6);
+}
+
+.form-select option {
+  font-size: 14px;
+  font-family: "Noto Sans", serif;
+}
+
+.form-control::placeholder {
+    color: #d8dee9;
+    opacity: 0.7;/
+}
+
+/* info icon */
+input-group-text {
+    cursor: pointer;
+}
+
+.bi-info-circle {
+    font-size: 1.2rem;
+}
+
+/* attempt to format logs */
+
+.list-group-item {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-group-item p {
+    margin-bottom: 0.5rem;
+}
+
+.list-group-item .btn {
+    margin-top: auto;
+}
+
+.card-body pre {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* code viewing through modal */
+
+.modal-content {
+    background-color: var(--nord1);
+    color: var(--nord4);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--nord3);
+}
+
+.modal-body pre {
+    max-height: 70vh;
+    overflow-y: auto;
+    background-color: var(--nord2);
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
 }

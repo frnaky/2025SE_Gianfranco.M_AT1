@@ -1,60 +1,21 @@
-const assets = [
-    "/",
-    "static/css/style.css",
-    "static/css/style.css/bootstrap.min.css",
-    "static/js/bootstrap.bundle.min.js",
-    "static/js/app.js",
-    "static/images/logo.png",
-    "static/images/favicon.jpg",
-    "static/icons/icon-128x128.png",
-    "static/icons/icon-192x192.png",
-    "static/icons/icon-384x384.png",
-    "static/icons/icon-512x512.png",
-    "static/icons/desktop_screenshot.png",
-    "static/icons/mobile_screenshot.png"
-  ];
+const CACHE_NAME = "logvault-v1";
+const urlsToCache = [
+  "/",
+  "/static/css/style.css",
+  "/static/js/main.js",
+  "/static/images/logo.png",
+];
 
-const CATALOGUE_ASSETS = "catalogue-assets";
-
-self.addEventListener("install", (installEvt) => {
-  installEvt.waitUntil(
-    caches
-      .open(CATALOGUE_ASSETS)
-      .then((cache) => {
-        console.log(cache)
-        cache.addAll(assets);
-      })
-      .then(self.skipWaiting())
-      .catch((e) => {
-        console.log(e);
-      })
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener("activate", function (evt) {
-  evt.waitUntil(
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
     caches
-      .keys()
-      .then((keyList) => {
-        return Promise.all(
-          keyList.map((key) => {
-            if (key === CATALOGUE_ASSETS) {
-              console.log("Removed old cache from", key);
-              return caches.delete(key);
-            }
-          })
-        );
-      })
-      .then(() => self.clients.claim())
+      .match(event.request)
+      .then((response) => response || fetch(event.request))
   );
 });
-
-self.addEventListener("fetch", function (evt) {
-  evt.respondWith(
-    fetch(evt.request).catch(() => {
-      return caches.open(CATALOGUE_ASSETS).then((cache) => {
-        return cache.match(evt.request);
-      });
-    })
-  );
-})

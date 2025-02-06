@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="text-center mb-4">Team Management</h1>
+  <div class="row">
+    {% for member in team_members %}
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ member.username }}</h5>
+          <p class="card-text">
+            <strong>Email:</strong> {{ member.email }}<br />
+            <strong>Total Logs:</strong> {{ member.log_count }}<br />
+            <strong>Total Hours:</strong> {{ member.total_hours }}<br />
+            <strong>Joined:</strong> {{ member.joined_date.strftime('%d-%B-%Y')
+            }}
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

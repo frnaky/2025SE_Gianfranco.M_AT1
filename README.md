@@ -2,72 +2,74 @@
 
 ## Introduction
 
-Welcome to the Diary System! This project is designed to help users maintain a personal diary, allowing them to record their thoughts, experiences, and important events in a structured and secure manner.
+Welcome to LogVault, a secure and safe software solution designed to help development teams record their code, track progress and streamline workflow.
 
-Welcome to LogVault, a secure and safe software solution to help development teams record their code, and
+![Screencap of dashboard](/static/images/cap1.png?raw=true)
 
 ## Features
 
-- **User Authentication**: Secure login and registration system to protect user data.
-- **Entry Management**: Create, read, update, and delete diary entries.
-- **Search Functionality**: Easily search through diary entries by date or keywords.
-- **Data Encryption**: Ensure that all diary entries are stored securely with encryption.
-- **User-Friendly Interface**: Simple and intuitive interface for easy navigation and use.
+- ### Secure Session Management via Flask-Login
+  - Storing session data in a **secure cookie**, with session persistence for user convenience.
+  - Reauthentication occurs every hour, and after closing the browser instance.
+- ### Password Resetting via SMTP + Flask-Mail
+- ### Control of Account + Data Privacy
+  - Deleting Account
+  - Downloading user data from database
+- ### Secure Development
+  - Password and baming requirements via RegEx
+  - BCrypt used to hash and salt passwords
+  - Time-Stamped diary entries
+  - External JavaScript
+  - Input Sanitisation
+- ### Security Logs
+- ### WC3 PWA Standards
+  - HTTPS supported
+  - manifest.json included
+  - Responsive - Tested on mobile devices
 
 ## Installation
 
-To install and run the Diary System locally, follow these steps:
+1. Clone Repository within a bash terminal.\
+   `git clone https://github.com/frnaky/2025SE_Gianfranco.M_AT1`
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/diary-system.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd diary-system
-   ```
-3. Install the required dependencies:
-   ```bash
-   npm install
-   ```
-4. Start the application:
-   ```bash
-   npm start
-   ```
+2. CD into directory.\
+   `cd 2025SE_Gianfranco.M_AT1`
+
+3. Setup venv. (Install if needed)\
+   `virtualenv venv`
+
+4. Activate venv.\
+   `source venv/Scripts/activate`
+
+5. Install prerequisites.\
+   `pip install -r requirements.txt`
+
+6. Run the application through a terminal.\
+   `python main.py`
+
+7. Open webpage locally.\
+   `https://127.0.0.1:5000`
 
 ## Usage
 
 1. Register for a new account or log in with your existing credentials.
-2. Create a new diary entry by clicking on the "New Entry" button.
+2. Create a new diary entry by clicking on the "Create Log" button.
 3. Fill in the details of your entry and save it.
 4. View, edit, or delete your entries from the dashboard.
 5. Use the search bar to find specific entries.
 
-## Contributing
+## Working Login
 
-We welcome contributions to the Diary System! If you would like to contribute, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Description of your changes"
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Create a pull request and describe your changes.
+- **Username:** `Franky` (Not needed for Sign-In)
+- **Email:** `gmanieli5647@gmail.com`
+- **Password:** `Software1sTheBest!`
+- **Team Name:** `TempeHS`
+- **Team Password:** `Software1sTheBest!`
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the GNU General Public License. See the [LICENSE](LICENSE) file for more details.
 
 ## Contact
 
-For any questions or feedback, please contact Gianfranco at gianfranco@example.com.
-
-Thank you for using the Diary System!
+For any questions or feedback, please contact Gianfranco at gmanieli5647@gmail.com

@@ -35,13 +35,19 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 2. CD into directory.\
    `cd 2025SE_Gianfranco.M_AT1`
 
-3. Install prerequisites.\
+3. Setup venv. (Install if needed)\
+   `virtualenv venv`
+
+4. Activate venv.\
+   `source venv/Scripts/activate`
+
+5. Install prerequisites.\
    `pip install -r requirements.txt`
 
-4. Run the application through a terminal.\
+6. Run the application through a terminal.\
    `python main.py`
 
-5. Open webpage locally.\
+7. Open webpage locally.\
    `https://127.0.0.1:5000`
 
 ## Usage

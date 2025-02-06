@@ -7,9 +7,12 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 ## Features
 
 - ### Session Management via Flask-Login
-  - Storing session data in a secure cookie, with session persistence for user convenience.
+  - Storing session data in a **secure cookie**, with session persistence for user convenience.
   - **Reauthentication** occurs every hour, and after closing the browser instance.
--
+- ### Password Resetting via SMTP
+- ### Control of Account + Data Privacy
+  - **Deleting Account**
+  - **Downloading user data from database**
 
 ## Installation
 

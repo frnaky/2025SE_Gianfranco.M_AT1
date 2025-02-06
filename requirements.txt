@@ -4,3 +4,5 @@ flask_wtf
 flask-csp
 flask_sqlalchemy
 flask-login
+Flask-Mail
+python-dotenv

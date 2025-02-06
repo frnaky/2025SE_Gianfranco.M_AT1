@@ -1,20 +1,33 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-import bcrypt
 from datetime import datetime
-import os
-import re
+import os, re, bcrypt
 from io import StringIO, BytesIO
 import csv
+from flask import current_app as app
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Mail, Message
+from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
+
 #database file link
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "databaseFiles", "database.db")}' #testing weird solution on stackoverflow, might change after
 db = SQLAlchemy(app)
 
+#flask mail config
+load_dotenv()
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = 'no-reply@logvault.com'
+
+mail = Mail(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -248,6 +261,58 @@ def delete_account():
     flash("Account Deleted.", "success")
     return redirect(url_for('dashboard'))
 
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = User.query.filter_by(email=email).first()
+        if user:
+            s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+            token = s.dumps(email, salt='password-reset')
+
+            reset_link = url_for('reset_password', token=token, _external=True)
+
+            msg = Message('Password Reset Request',
+                          sender=app.config['MAIL_DEFAULT_SENDER'],
+                          recipients=[email])
+            msg.body = (
+                f"Hello LogVault User!,\n\n"
+                "You have FORGOTTTEN your password.. "
+                "If you initiated this request, please click the link below to reset your password:\n\n"
+                f"{reset_link}\n\n"
+                "If you DID NOT request a password reset, please ignore this email.\n\n"
+                "Cheers,\n"
+                "Gianfranco from LogVault"
+            )
+            mail.send(msg)
+
+            flash('A password reset link has been sent to your email. Check your Spam.', 'info')
+            return redirect(url_for('login'))
+        else:
+            flash('Email Not Found!', 'danger')
+            return redirect(url_for('forgot_password'))
+
+    return render_template('forgot_password.html')
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+        email = s.loads(token, salt='password-reset', max_age=3600)  # token expires in 1 hour
+        user = User.query.filter_by(email=email).first()
+        
+        if request.method == 'POST':
+            new_password = request.form['password']
+            user.set_password(new_password)
+            db.session.commit()
+            flash('Your password has been reset successfully!', 'success')
+            return redirect(url_for('login'))
+
+        return render_template('reset_password.html', token=token)
+    
+    except SignatureExpired:
+        flash('The reset link has expired.', 'danger')
+        return redirect(url_for('forgot_password'))
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

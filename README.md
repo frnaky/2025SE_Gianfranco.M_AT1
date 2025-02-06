@@ -4,18 +4,28 @@
 
 Welcome to LogVault, a secure and safe software solution designed to help development teams record their code, track progress and streamline workflow.
 
+![Screencap of dashboard](/static/images/cap1.png?raw=true)
+
 ## Features
 
 - ### Secure Session Management via Flask-Login
   - Storing session data in a **secure cookie**, with session persistence for user convenience.
-  - **Reauthentication** occurs every hour, and after closing the browser instance.
+  - Reauthentication occurs every hour, and after closing the browser instance.
 - ### Password Resetting via SMTP + Flask-Mail
 - ### Control of Account + Data Privacy
-  - **Deleting Account**
-  - **Downloading user data from database**
-- ### Password and Naming requirements via RegEx
+  - Deleting Account
+  - Downloading user data from database
+- ### Secure Development
+  - Password and baming requirements via RegEx
+  - BCrypt used to hash and salt passwords
+  - Time-Stamped diary entries
+  - External JavaScript
+  - Input Sanitisation
 - ### Security Logs
-- ### External Javascript
+- ### WC3 PWA Standards
+  - HTTPS supported
+  - manifest.json included
+  - Responsive - Tested on mobile devices
 
 ## Installation
 
@@ -25,11 +35,14 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 2. CD into directory.\
    `cd 2025SE_Gianfranco.M_AT1`
 
-3. Run the application through a terminal.\
+3. Install prerequisites.\
+   `pip install -r requirements.txt`
+
+4. Run the application through a terminal.\
    `python main.py`
 
-4. Open webpage locally.\
-   `http://127.0.0.1:5000`
+5. Open webpage locally.\
+   `https://127.0.0.1:5000`
 
 ## Usage
 
@@ -43,7 +56,7 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 
 - **Username:** `Franky` (Not needed for Sign-In)
 - **Email:** `gmanieli5647@gmail.com`
-- **Password:** `Software1sTheBest!!`
+- **Password:** `Software1sTheBest!`
 - **Team Name:** `TempeHS`
 - **Team Password:** `Software1sTheBest!`
 

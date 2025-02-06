@@ -1,14 +1,16 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, send_file, jsonify
+from flask import (
+    Flask, render_template, redirect, url_for, request, flash,
+    send_file, jsonify, make_response, send_from_directory,
+    current_app as app
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from datetime import datetime
-import os, re, bcrypt
-from io import StringIO, BytesIO
-import csv
-from flask import current_app as app
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
+from datetime import datetime
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from dotenv import load_dotenv
+from io import StringIO, BytesIO
+import os, re, bcrypt, csv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__, static_folder='static')
@@ -87,11 +89,22 @@ class Team(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# SANITISATION FUNCTIONs
+
+def sanitise_html(input_string): #html sanitisation
+    return re.sub(r'<[^>]*>', '', input_string)
+
+def sanitise_code(input_string): #character sanitisation
+    cleaned = re.sub(r'<[^>]*>', '', input_string)
+    return re.sub(r'[^\w\s.,!?@#$%^&*()+=\[\]{}/\\:;<>~`\'"-]', '', cleaned)
+
 # HOME PAGE
 
 @app.route('/')
 def index():
-    return render_template('home.html')	
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    return render_template('home.html')
 
 # SIGNUP PAGE + FUNCTIONALITY
 
@@ -225,12 +238,11 @@ def account():
 @login_required
 def create_log():
     if request.method == 'POST':
-        project_name = request.form['project_name']
-        code_language = request.form['code_language']
+        project_name = sanitise_html(request.form['project_name'])
+        code_language = sanitise_html(request.form['code_language'])
 
         if code_language == "other":
             code_language = request.form['custom_language'].strip()
-
         start_date_str = request.form['start_date']
         end_date_str = request.form['end_date']
 
@@ -244,9 +256,9 @@ def create_log():
         start_date = datetime.strptime(start_date_str, '%Y-%m-%dT%H:%M')
         end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
 
-        repository = request.form['repository']
-        dev_notes = request.form['dev_notes']
-        log_content = request.form['log_content']
+        repository = sanitise_html(request.form['repository'])
+        dev_notes = sanitise_code(request.form['dev_notes'])
+        log_content = sanitise_code(request.form['log_content'])
 
     # ROUNDING SYSTEM FOR CLIENT BILLING PURPOSES
         delta = end_date - start_date
@@ -450,6 +462,20 @@ def reset_password(token):
     except SignatureExpired:
         flash('The reset link has expired.', 'danger')
         return redirect(url_for('forgot_password'))
+    
+# SERVICE WORKER IMPLEMENTATION
+
+@app.route('/service-worker.js')
+def service_worker():
+    response = make_response(send_from_directory('static/js', 'service-worker.js'))
+    response.headers['Content-Type'] = 'application/javascript'
+    response.headers['Service-Worker-Allowed'] = '/'
+    return response
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(
+        debug=True, 
+        host="0.0.0.0", 
+        port=5000,
+        ssl_context=('cert.pem', 'key.pem')
+    )

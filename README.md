@@ -28,9 +28,9 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 
 ## Working Login
 
-- **Username:** `Testing` (Not needed for Sign-In)
-- **Email:** `Testing@gmail.com`
-- **Password:** `test123`
+- **Username:** `Test` (Not needed for Sign-In)
+- **Email:** `123@gmail.com`
+- **Password:** `Software1sTheBest!`
 
 ## License
 

@@ -68,6 +68,20 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
+    #only can have letters and numbers, no spaces max 10 characters
+        username_regex = r'^[A-Za-z0-9]{1,20}$'
+
+        if not re.match(username_regex, username):
+            flash('Username CANNOT have spaces and must not exceed 20 characters!', 'danger')
+            return redirect(url_for('signup'))
+        
+    #password regular expression validation
+        password_regex = r'^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$'
+        
+        if not re.match(password_regex, password):
+            flash('Password has to be atleast 8 characters long, and include 1 number, 1 special character, and 1 capital letter.', 'danger')
+            return redirect(url_for('signup'))
+
         if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
             flash('User Already Exists.', 'danger')
             return redirect(url_for('signup'))

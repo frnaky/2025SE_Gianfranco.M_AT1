@@ -15,12 +15,30 @@
       </div>
       <div class="mb-3">
         <label for="code_language" class="form-label">Code Language</label>
-        <input
-          type="text"
-          class="form-control"
+        <select
+          class="form-select sick-dropdown"
           id="code_language"
           name="code_language"
           required
+          onchange="toggleCustomInput()"
+        >
+          <option value="json">JSON (.json)</option>
+          <option value="text">Text (.txt)</option>
+          <option value="markdown">Markdown (.md)</option>
+          <option value="python">Python (.py)</option>
+          <option value="javascript">JavaScript (.js)</option>
+          <option value="html">HTML (.html)</option>
+          <option value="css">CSS (.css)</option>
+          <option value="c++">C++ (.cpp)</option>
+          <option value="other">Other (Specify)</option>
+        </select>
+        <input
+          type="text"
+          class="form-control mt-2"
+          id="custom_language"
+          name="custom_language"
+          placeholder="Enter your Code Language"
+          style="display: none"
         />
       </div>
       <div class="mb-3">
@@ -34,22 +52,22 @@
         />
       </div>
       <div class="mb-3">
-        <label for="start_time" class="form-label">Start Time</label>
+        <label for="start_date" class="form-label">Start Time</label>
         <input
           type="datetime-local"
           class="form-control"
-          id="start_time"
-          name="start_time"
+          id="start_date"
+          name="start_date"
           required
         />
       </div>
       <div class="mb-3">
-        <label for="end_time" class="form-label">End Time</label>
+        <label for="end_date" class="form-label">End Time</label>
         <input
           type="datetime-local"
           class="form-control"
-          id="end_time"
-          name="end_time"
+          id="end_date"
+          name="end_date"
           required
         />
       </div>
@@ -79,4 +97,19 @@
     </form>
   </div>
 </div>
+
+<!-- javascript for other(specify) -->
+<script>
+  function toggleCustomInput() {
+    const codeLanguage = document.getElementById("code_language").value;
+    const customLanguageInput = document.getElementById("custom_language");
+
+    if (codeLanguage === "other") {
+      customLanguageInput.style.display = "block";
+    } else {
+      customLanguageInput.style.display = "none";
+    }
+  }
+</script>
+
 {% endblock %}

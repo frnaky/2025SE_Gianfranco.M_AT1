@@ -20,17 +20,18 @@
       <div class="list-group-item">
         <h5>Project: {{ log.project_name }}</h5>
         <p><strong>Developer:</strong> {{ log.username }}</p>
+        <p><strong>Code Language:</strong> {{ log.code_language }}</p>
         <p>
-          <strong>Start Time:</strong> {{ log.start_time.strftime('%I:%M%p
-          %d/%B/%Y') }}
+          <strong>Start Time:</strong> {{ log.start_date.strftime('%I:%M%p %d -
+          %B - %Y') }}
         </p>
         <p>
-          <strong>End Time:</strong> {{ log.end_time.strftime('%I:%M%p
-          %d/%B/%Y') }}
+          <strong>End Time:</strong> {{ log.end_date.strftime('%I:%M%p %d - %B -
+          %Y') }}
         </p>
         <p>
-          <strong>Diary Entry Time:</strong> {{
-          log.diary_entry_time.strftime('%I:%M%p %d/%B/%Y') }}
+          <strong>Diary Entry Time: </strong>{{ log.date.strftime('%I:%M%p %d -
+          %B - %Y') }}
         </p>
         <p><strong>Time Worked:</strong> {{ log.time_worked }} hours</p>
         <p>
@@ -39,8 +40,8 @@
             >{{ log.repository }}</a
           >
         </p>
-        <p><strong>Developer Notes:</strong> {{ log.developer_notes }}</p>
-        <pre><code>{{ log.code_content }}</code></pre>
+        <p><strong>Developer Notes:</strong> {{ log.dev_notes }}</p>
+        <pre><code>{{ log.log_content }}</code></pre>
       </div>
       {% endfor %}
     </div>

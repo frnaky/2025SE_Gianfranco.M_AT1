@@ -3,6 +3,81 @@
   <div class="text-center mt-5">
     <h1 class="display-4 fw-bold">Privacy Policy</h1>
   </div>
-  <div class="row"></div>
+  <div class="row mt-5">
+    <div class="col-md-8 offset-md-2">
+      <p>
+        Your privacy is important to us. It is LogVault's policy to respect your
+        privacy regarding any information we may collect from you across our
+        website, <a href="{{ url_for('dashboard') }}">http://logvault.com</a>,
+        and other sites we own and operate.
+      </p>
+      <div class="section mb-5">
+        <h2>Your Options</h2>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-body">
+                <h3 class="card-title">Download Data</h3>
+                <p class="card-text">Download all your logs.</p>
+                <button id="downloadData" class="btn btn-primary">
+                  Download Data
+                </button>
+                <div
+                  id="downloadError"
+                  class="text-danger mt-3"
+                  style="display: none"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-body">
+                <h3 class="card-title">Delete Account</h3>
+                <p class="card-text">
+                  Delete Account and Data associated with it.
+                </p>
+                <button id="delete_account" class="btn btn-danger">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row"></div>
+    </div>
+  </div>
 </div>
+
+<script>
+  document
+    .getElementById("downloadData")
+    .addEventListener("click", function () {
+      fetch("/download_data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Download failed: " + response.statusText);
+          }
+          return response.blob();
+        })
+        .then((blob) => {
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "user_logs.csv";
+          link.click();
+        })
+        .catch((error) => {
+          document.getElementById("downloadError").style.display = "block";
+          document.getElementById("downloadError").innerText = error.message;
+        });
+    });
+</script>
+
 {% endblock %}

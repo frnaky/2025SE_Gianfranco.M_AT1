@@ -75,16 +75,9 @@ body {
   border-color: var(--nord12);
 }
 
-.form-control {
-  background-color: var(--nord2);
-  border: 1px solid var(--nord3);
-  color: var(--nord6);
-}
-
-.form-control:focus {
-  background-color: var(--nord2);
-  border-color: var(--nord8);
-  color: var(--nord6);
+.input-group-text {
+  background: white;
+  border-left: none;
 }
 
 html,
@@ -125,11 +118,6 @@ main {
   margin-right: 20px;
 }
 
-.form-control::placeholder {
-    color: #d8dee9;
-    opacity: 0.7;/
-}
-
 .list-group {
   background-color: var(--nord1);
   border: 1px solid var(--nord2);
@@ -168,3 +156,43 @@ main {
   font-size: 16px;
   opacity: 0.8;
 }
+
+/*forms*/
+
+.form-control {
+  background-color: var(--nord2);
+  border: 1px solid var(--nord3);
+  color: var(--nord6);
+}
+
+.form-control:focus {
+  background-color: var(--nord2);
+  border-color: var(--nord8);
+  color: var(--nord6);
+}
+
+.form-select {
+  background-color: var(--nord2);
+  border: 1px solid var(--nord3);
+  color: var(--nord6);
+  font-family: "Noto Sans", serif;
+  font-size: 16px;
+}
+
+.form-select:focus {
+  background-color: var(--nord2);
+  border-color: var(--nord8);
+  color: var(--nord6);
+}
+
+.form-select option {
+  font-size: 14px;
+  font-family: "Noto Sans", serif;
+}
+
+.form-control::placeholder {
+    color: #d8dee9;
+    opacity: 0.7;/
+}
+
+

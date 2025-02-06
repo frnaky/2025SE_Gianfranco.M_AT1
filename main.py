@@ -1,10 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import bcrypt
 from datetime import datetime
 import os
 import re
+from io import StringIO, BytesIO
+import csv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -43,8 +45,8 @@ class Log(db.Model):
     username = db.Column(db.String(50), nullable=False, default="N/A")
     project_name = db.Column(db.String(100), nullable=False)
     code_language = db.Column(db.String(50), nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=False)
+    start_date = db.Column(db.DateTime, nullable=False)
+    end_date = db.Column(db.DateTime, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     time_worked = db.Column(db.Float, nullable=False)
     repository = db.Column(db.String(100), nullable=False)
@@ -95,7 +97,7 @@ def login():
 
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
-            login_user(user)
+            login_user(user, duration=3600) #reauthentication every hour, and after closing tab
             flash('Logged-In.', 'success')
             return redirect(url_for('dashboard'))
         else:
@@ -114,25 +116,35 @@ def logout():
 def dashboard():
     return render_template('dashboard.html', user=current_user)
 
-# check if userexist... test later within the signup function
-#        if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
-#            flash('Username or email already exists', 'error')
-#            return redirect(url_for('signup'))
-
 @app.route('/create_log', methods=['GET', 'POST'])
 @login_required
 def create_log():
     if request.method == 'POST':
         project_name = request.form['project_name']
         code_language = request.form['code_language']
-        start_time = datetime.strptime(request.form['start_time'], '%Y-%m-%dT%H:%M')
-        end_time = datetime.strptime(request.form['end_time'], '%Y-%m-%dT%H:%M')
+
+        if code_language == "other":
+            code_language = request.form['custom_language'].strip()
+
+        start_date_str = request.form['start_date']
+        end_date_str = request.form['end_date']
+
+
+#ensure start and end date are not empty   
+        if not start_date_str or not end_date_str:
+            flash("Start Date and End Date needed.", "danger")
+            return redirect(url_for('create_log'))
+
+        #conversion
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%dT%H:%M')
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%dT%H:%M')
+
         repository = request.form['repository']
         dev_notes = request.form['dev_notes']
         log_content = request.form['log_content']
 
 #calculate rounding up 15 mins for client billing purposes
-        delta = end_time - start_time
+        delta = end_date - start_date
         minutes_worked = delta.total_seconds() / 60
         rounded_minutes = (round(minutes_worked / 15)) * 15 
         time_worked = rounded_minutes / 60
@@ -142,8 +154,8 @@ def create_log():
             username=current_user.username,
             project_name=project_name,
             code_language=code_language,
-            start_time=start_time,
-            end_time=end_time,
+            start_date=start_date,
+            end_date=end_date,
             date=datetime.utcnow(),
             time_worked=time_worked,
             repository=repository,
@@ -173,6 +185,39 @@ def search_logs():
 @app.route('/privacy')
 def privacy():
     return render_template('privacy.html')
+
+#pirvacy policy page
+@app.route('/download_data', methods=['POST'])
+@login_required
+def download_data():
+    if not current_user.is_authenticated:
+        return jsonify({"error": "You Must Be Logged-In To Do This."}), 401
+    
+    user_logs = Log.query.filter_by(user_id=current_user.user_id).all()
+    if not user_logs:
+        return jsonify({"error": "No Data Found."}), 404
+
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Project Name', 'Code Language', 'Start Date', 'End Date', 'Time Worked', 'Repository', 'Developer Notes', 'Log Content'])
+
+    for log in user_logs:
+        writer.writerow([
+            log.project_name,
+            log.code_language,
+            log.start_date,
+            log.end_date,
+            log.time_worked,
+            log.repository,
+            log.dev_notes,
+            log.log_content
+        ])
+
+    output.seek(0)
+    byte_output = BytesIO(output.getvalue().encode('utf-8'))
+    return send_file(byte_output, as_attachment=True, download_name="developer_logs.csv", mimetype="text/csv")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

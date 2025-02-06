@@ -19,9 +19,13 @@
               <div class="card-body">
                 <h3 class="card-title">Download Data</h3>
                 <p class="card-text">Download all your logs.</p>
-                <button id="downloadData" class="btn btn-primary">
-                  Download Data
-                </button>
+                <form
+                  method="GET"
+                  action="{{ url_for('download_data') }}"
+                ></form>
+                <a href="{{ url_for('download_data') }}" class="btn btn-primary"
+                  >Download Data</a
+                >
                 <div
                   id="downloadError"
                   class="text-danger mt-3"
@@ -37,8 +41,12 @@
                 <p class="card-text">
                   Delete Account and Data associated with it.
                 </p>
-                <button id="delete_account" class="btn btn-danger">
-                  Delete
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  onclick="confirmDelete()"
+                >
+                  Delete Account
                 </button>
               </div>
             </div>
@@ -78,6 +86,27 @@
           document.getElementById("downloadError").innerText = error.message;
         });
     });
+</script>
+
+<form
+  id="deleteAccountForm"
+  action="{{ url_for('delete_account') }}"
+  method="POST"
+  style="display: none"
+>
+  <button type="submit" style="display: none"></button>
+</form>
+
+<script>
+  function confirmDelete() {
+    const confirmed = confirm(
+      "Are You Sure you want to Delete your Account.. THIS CANNOT BE UNDONE! think wisely.."
+    );
+
+    if (confirmed) {
+      document.getElementById("deleteAccountForm").submit();
+    }
+  }
 </script>
 
 {% endblock %}

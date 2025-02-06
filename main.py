@@ -187,11 +187,12 @@ def privacy():
     return render_template('privacy.html')
 
 #pirvacy policy page
-@app.route('/download_data', methods=['POST'])
+@app.route('/download_data', methods=['GET'])
 @login_required
 def download_data():
     if not current_user.is_authenticated:
-        return jsonify({"error": "You Must Be Logged-In To Do This."}), 401
+        flash("You Have to be Logged-In to do this.", "danger")
+        return redirect(url_for('login'))
     
     user_logs = Log.query.filter_by(user_id=current_user.user_id).all()
     if not user_logs:
@@ -215,8 +216,23 @@ def download_data():
 
     output.seek(0)
     byte_output = BytesIO(output.getvalue().encode('utf-8'))
-    return send_file(byte_output, as_attachment=True, download_name="developer_logs.csv", mimetype="text/csv")
+    return send_file(byte_output, as_attachment=True, download_name="user_logs.csv", mimetype="text/csv")
 
+
+@app.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    if not current_user.is_authenticated:
+        flash("You must be logged in to an account to delete an account. Muppet." "danger")
+        return redirect(url_for('login'))
+
+    Log.query.filter_by(user_id=current_user.user_id).delete()
+    db.session.delete(current_user)
+    db.session.commit()
+    logout_user()
+
+    flash("Account Deleted.", "success")
+    return redirect(url_for('dashboard'))
 
 
 if __name__ == "__main__":

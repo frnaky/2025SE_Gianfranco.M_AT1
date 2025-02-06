@@ -1,0 +1,85 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+  <h1 class="text-center mb-4">Account Overview</h1>
+
+  <div class="row mb-4">
+    <div class="col-md-6 mx-auto">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title">{{ user.username }}</h3>
+          <p class="card-text">
+            <strong>Email:</strong> {{ user.email }}<br />
+            <strong>Total Logs:</strong> {{ log_count }}<br />
+            <strong>Total Hours:</strong> {{ total_hours }}<br />
+            <strong>Member Since:</strong> {{
+            user.created_at.strftime('%d-%B-%Y') }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col">
+      <h2>Recent Logs</h2>
+    </div>
+    <div class="col text-end">
+      <a href="{{ url_for('download_data') }}" class="btn btn-primary"
+        >Download Logs</a
+      >
+    </div>
+  </div>
+
+  <div class="row">
+    {% for log in logs %}
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ log.project_name }}</h5>
+          <p class="card-text">
+            <strong>Language:</strong> {{ log.code_language }}<br />
+            <strong>Date:</strong> {{ log.date.strftime('%d-%B-%Y') }}<br />
+            <strong>Hours:</strong> {{ log.time_worked }}<br />
+            <strong>Repository:</strong>
+            <a href="{{ log.repository }}" target="_blank">Link</a>
+          </p>
+          <button
+            class="btn btn-primary"
+            type="button"
+            onclick="showCode({{ log.log_content|tojson|safe }})"
+          >
+            View Log Content
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- modal STOLEN from search_logs -->
+<div
+  class="modal fade"
+  id="codeModal"
+  tabindex="-1"
+  aria-labelledby="codeModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="codeModalLabel">Log Content</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <pre><code id="modalCodeContent"></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

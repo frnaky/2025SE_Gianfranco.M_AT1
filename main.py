@@ -6,12 +6,12 @@ import os, re, bcrypt
 from io import StringIO, BytesIO
 import csv
 from flask import current_app as app
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 
 # DATABASE CONFIGURATION
@@ -184,6 +184,41 @@ def logout():
 def dashboard():
     return render_template('dashboard.html', user=current_user)
 
+# TEAM MANAGEMENT PAGE + FUNCTIONALITY
+@app.route('/team_management')
+@login_required
+def team_management():
+    team_members = User.query.filter_by(team_id=current_user.team_id).all()
+    member_stats = []
+    
+    for member in team_members:
+        log_count = Log.query.filter_by(user_id=member.user_id).count()
+        total_hours = db.session.query(db.func.sum(Log.time_worked)).filter_by(user_id=member.user_id).scalar() or 0
+        member_stats.append({
+            'username': member.username,
+            'email': member.email,
+            'log_count': log_count,
+            'total_hours': round(total_hours, 2),
+            'joined_date': member.created_at
+        })
+    
+    return render_template('team_management.html', team_members=member_stats)
+
+# ACCOUNT
+
+@app.route('/account')
+@login_required
+def account():
+    user_logs = Log.query.filter_by(user_id=current_user.user_id).order_by(Log.date.desc()).all()
+    total_hours = db.session.query(db.func.sum(Log.time_worked)).filter_by(user_id=current_user.user_id).scalar() or 0
+    log_count = len(user_logs)
+    
+    return render_template('account.html', 
+                         user=current_user,
+                         logs=user_logs,
+                         total_hours=round(total_hours, 2),
+                         log_count=log_count)
+
 # CREATE LOGS PAGE + FUNCTIONALITY
 
 @app.route('/create_log', methods=['GET', 'POST'])
@@ -347,6 +382,8 @@ def delete_account():
     flash("Account Deleted.", "success")
     return redirect(url_for('dashboard'))
 
+# FORGOT PASSWORD FUNCTIONALITY
+
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
@@ -390,10 +427,22 @@ def reset_password(token):
         user = User.query.filter_by(email=email).first()
         
         if request.method == 'POST':
-            new_password = request.form['password']
-            user.set_password(new_password)
+            password = request.form['password']
+            confirm_password = request.form['confirm_password']
+
+            if password != confirm_password:
+                flash("Passwords Don't Match!", 'danger')
+                return render_template('reset_password.html', token=token)
+
+        # REGULAR EXPRESSION FOR PASSWORD VALIDATION TAKEN FROM SIGNUP FUNCTIONALITY
+            password_regex = r'^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$'
+            if not re.match(password_regex, password):
+                flash('Password must be at least 8 characters long, include 1 number, 1 special character, and 1 capital letter.', 'danger')
+                return render_template('reset_password.html', token=token)
+
+            user.set_password(password)
             db.session.commit()
-            flash('Your password has been reset successfully!', 'success')
+            flash('Your password has been reset!', 'success')
             return redirect(url_for('login'))
 
         return render_template('reset_password.html', token=token)

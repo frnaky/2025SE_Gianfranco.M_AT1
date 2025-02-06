@@ -1,113 +1,112 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <div class="row justify-content-center">
   <div class="col-md-10">
     <h1 class="text-center mb-4">Search Logs</h1>
-        <form method="GET" action="{{ url_for('search_logs') }}" class="mb-4">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" name="query" placeholder="Search for text" value="{{ request.args.get('query', '') }}">
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <select class="form-select" name="code_language">
-                        <option value="">Select Language</option>
-                        {% for language in unique_languages %}
-                        <option value="{{ language[0] }}" {% if request.args.get('code_language') == language[0] %}selected{% endif %}>
-                            {{ language[0] }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <select class="form-select" name="username">
-                        <option value="">Select Developer</option>
-                        {% for username in unique_usernames %}
-                        <option value="{{ username[0] }}" {% if request.args.get('username') == username[0] %}selected{% endif %}>
-                            {{ username[0] }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <select class="form-select" name="project_name">
-                        <option value="">Select Project</option>
-                        {% for project in unique_projects %}
-                        <option value="{{ project[0] }}" {% if request.args.get('project_name') == project[0] %}selected{% endif %}>
-                            {{ project[0] }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <select class="form-select" name="repository">
-                        <option value="">Select Repository</option>
-                        {% for repo in unique_repositories %}
-                        <option value="{{ repo[0] }}" {% if request.args.get('repository') == repo[0] %}selected{% endif %}>
-                            {{ repo[0] }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="date_from" class="form-label">Filter Start Time From:</label>
-                    <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.args.get('date_from', '') }}">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="date_to" class="form-label">Filter End Time Until:</label>
-                    <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.args.get('date_to', '') }}">
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Search</button>
-        </form>
-    {% if logs %}
-    <div class="row">
-        {% for log in logs %}
-        <div class="col-md-6 mb-4">
-            <div class="list-group-item h-100">
-                <h5>Project: {{ log.project_name }}</h5>
-                <p><strong>Developer:</strong> {{ log.username }}</p>
-                <p><strong>Code Language:</strong> {{ log.code_language }}</p>
-                <p><strong>Start Time:</strong> {{ log.start_date.strftime('%I:%M%p %d - %B - %Y') }}</p>
-                <p><strong>End Time:</strong> {{ log.end_date.strftime('%I:%M%p %d - %B - %Y') }}</p>
-                <p><strong>Time Created: </strong>{{ log.date.strftime('%I:%M%p %d - %B - %Y') }}</p>
-                <p><strong>Time Worked:</strong> {{ log.time_worked }} hours</p>
-                <p><strong>Repo:</strong> <a href="{{ log.repository }}" target="_blank">{{ log.repository }}</a></p>
-                <p><strong>Developer Notes:</strong> {{ log.dev_notes }}</p>
-                
-                <button class="btn btn-primary" type="button" onclick='showCode({{ log.log_content|tojson|safe }})'>
-                  View Log Content
-                </button>
-                <div class="collapse mt-3" id="logContent{{ log.log_id }}">
-                    <div class="card card-body">
-                        <pre><code>{{ log.log_content }}</code></pre>
-                    </div>
-                </div>
-            </div>
+    <form method="GET" action="{{ url_for('search_logs') }}" class="mb-4">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" name="query" placeholder="Search for text" value="{{ request.args.get('query', '') }}">
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <select class="form-select" name="code_language">
+            <option value="">Select Language</option>
+            {% for language in unique_languages %}
+              <option value="{{ language[0] }}" {% if request.args.get('code_language') == language[0] %}selected{% endif %}>
+                {{ language[0] }}
+              </option>
+            {% endfor %}
+          </select>
         </div>
+        <div class="col-md-6 mb-3">
+          <select class="form-select" name="username">
+            <option value="">Select Developer</option>
+            {% for username in unique_usernames %}
+              <option value="{{ username[0] }}" {% if request.args.get('username') == username[0] %}selected{% endif %}>
+                {{ username[0] }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <select class="form-select" name="project_name">
+            <option value="">Select Project</option>
+            {% for project in unique_projects %}
+              <option value="{{ project[0] }}" {% if request.args.get('project_name') == project[0] %}selected{% endif %}>
+                {{ project[0] }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <select class="form-select" name="repository">
+            <option value="">Select Repository</option>
+            {% for repo in unique_repositories %}
+              <option value="{{ repo[0] }}" {% if request.args.get('repository') == repo[0] %}selected{% endif %}>
+                {{ repo[0] }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="date_from" class="form-label">Filter Start Time From:</label>
+          <input type="date" class="form-control" id="date_from" name="date_from" value="{{ request.args.get('date_from', '') }}">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="date_to" class="form-label">Filter End Time Until:</label>
+          <input type="date" class="form-control" id="date_to" name="date_to" value="{{ request.args.get('date_to', '') }}">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Search</button>
+    </form>
+
+    {% if logs %}
+      <div class="row">
+        {% for log in logs %}
+          <div class="col-md-6 mb-4">
+            <div class="list-group-item h-100">
+              <h5>Project: {{ log.project_name }}</h5>
+              <p><strong>Developer:</strong> {{ log.username }}</p>
+              <p><strong>Code Language:</strong> {{ log.code_language }}</p>
+              <p><strong>Start Time:</strong> {{ log.start_date.strftime('%I:%M%p %d - %B - %Y') }}</p>
+              <p><strong>End Time:</strong> {{ log.end_date.strftime('%I:%M%p %d - %B - %Y') }}</p>
+              <p><strong>Time Created: </strong>{{ log.date.strftime('%I:%M%p %d - %B - %Y') }}</p>
+              <p><strong>Time Worked:</strong> {{ log.time_worked }} hours</p>
+              <p><strong>Repo:</strong> <a href="{{ log.repository }}" target="_blank">{{ log.repository }}</a></p>
+              <p><strong>Developer Notes:</strong> {{ log.dev_notes }}</p>
+              <button class="btn btn-primary" type="button" onclick='showCode({{ log.log_content|tojson|safe }})'>
+                View Log Content
+              </button>
+              <div class="collapse mt-3" id="logContent{{ log.log_id }}">
+                <div class="card card-body">
+                  <pre><code>{{ log.log_content }}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
         {% endfor %}
-    </div>
+      </div>
     {% else %}
       <p class="text-center">No Logs Found.</p>
     {% endif %}
   </div>
 </div>
+
 <div class="modal fade" id="codeModal" tabindex="-1" aria-labelledby="codeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="codeModalLabel">Log Content</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <pre><code id="modalCodeContent"></code></pre>
-            </div>
-        </div>
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="codeModalLabel">Log Content</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <pre><code id="modalCodeContent"></code></pre>
+      </div>
     </div>
+  </div>
 </div>
-<script>
-function showCode(content) {
-    document.getElementById('modalCodeContent').textContent = content;
-    const modal = new bootstrap.Modal(document.getElementById('codeModal'));
-    modal.show();
-}
-</script>
+
+<script src="/static/js/search_logs.js" type="text/javascript"></script>
+
 {% endblock %}

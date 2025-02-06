@@ -6,20 +6,30 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 
 ## Features
 
-- ### Session Management via Flask-Login
+- ### Secure Session Management via Flask-Login
   - Storing session data in a **secure cookie**, with session persistence for user convenience.
   - **Reauthentication** occurs every hour, and after closing the browser instance.
-- ### Password Resetting via SMTP
+- ### Password Resetting via SMTP + Flask-Mail
 - ### Control of Account + Data Privacy
   - **Deleting Account**
   - **Downloading user data from database**
+- ### Password and Naming requirements via RegEx
+- ### Security Logs
+- ### External Javascript
 
 ## Installation
 
-1. Run `git clone https://github.com/frnaky/2025SE_Gianfranco.M_AT1` within a bash terminal.
-2. Use "cd" to enter the root directory of `2025SE_Gianfranco.M_AT1`
-3. Within a bash terminal, run `python main.py`
-4. Open the link `http://127.0.0.1:5000`, or any link given under "Running on \_\_\_\_\_\_\_\_\_\_\_\_" within a browser
+1. Clone Repository within a bash terminal.\
+   `git clone https://github.com/frnaky/2025SE_Gianfranco.M_AT1`
+
+2. CD into directory.\
+   `cd 2025SE_Gianfranco.M_AT1`
+
+3. Run the application through a terminal.\
+   `python main.py`
+
+4. Open webpage locally.\
+   `http://127.0.0.1:5000`
 
 ## Usage
 
@@ -31,9 +41,11 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 
 ## Working Login
 
-- **Username:** `Test` (Not needed for Sign-In)
-- **Email:** `123@gmail.com`
-- **Password:** `Software1sTheBest!`
+- **Username:** `Franky` (Not needed for Sign-In)
+- **Email:** `gmanieli5647@gmail.com`
+- **Password:** `Software1sTheBest!!`
+- **Team Name:** `TempeHS`
+- **Team Password:** `Software1sTheBest!`
 
 ## License
 

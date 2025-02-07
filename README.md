@@ -66,6 +66,23 @@ Welcome to LogVault, a secure and safe software solution designed to help develo
 - **Team Name:** `TempeHS`
 - **Team Password:** `Software1sTheBest!`
 
+## Common Issues
+
+**HTTP ERROR 502**
+
+1.  Within codespaces, go to the ports tab within the terminal panel.
+2.  Right-click on the 5000 Port row.
+3.  Change port protocol to HTTPS
+
+**App not launching due to issues with imported libraries**
+
+1. Uninstall requirements\
+   `pip uninstall -r requirements.txt`
+2. Clear cache\
+   `python -m pip cache purge`
+3. Reinstall requirements\
+   `pip install -r requirements.txt`
+
 ## License
 
 This project is licensed under the GNU General Public License. See the [LICENSE](LICENSE) file for more details.
